@@ -1,0 +1,16 @@
+*.o
+*.o.*
+*.ko
+*.mod.c
+*.mod
+*.cmd
+modules.order
+Module.symvers
+
+compile_commands.json
+
+.vscode/
+
+# Common editor swap files
+.*.swp
+*~
