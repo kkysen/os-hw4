@@ -1,6 +1,7 @@
 set shell := ["bash", "-c"]
 
 uni := "ks3343"
+hw := "4"
 n_proc := `nproc`
 
 default:
@@ -148,3 +149,13 @@ run-mod dir: (run-mod-only dir)
 #     make -C linux "-j{{n_proc}}"
 #     sudo make -C linux modules_install
 #     sudo make -C linux install
+
+default-branch:
+    git remote show origin | rg 'HEAD branch: (.*)$' --only-matching --replace '$1'
+
+tag name message:
+    git tag -a -m "{{message}}" "{{name}}"
+    git push origin "$(just default-branch)"
+    git push origin "{{name}}"
+
+submit part: (tag "hw" + hw + "p" + part + "handin" "Completed hw" + hw + " part" + part + ".")
