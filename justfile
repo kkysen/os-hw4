@@ -43,8 +43,16 @@ map-lines pattern replacement:
 
 pre-make:
 
-make *args: pre-make
-    cd user/module/supermom && make -j{{n_proc}} {{args}}
+make-in dir *args:
+    cd "{{dir}}" && make -j{{n_proc}} {{args}}
+
+make-mod *args: (make-in "user/module/supermom" args)
+
+make-kernel *args: (make-in "linux" args)
+
+make: pre-make make-mod make-kernel
+
+install: (make-kernel "modules_install") (make-kernel "install")
 
 modified-files:
     git diff --name-only
@@ -63,11 +71,47 @@ pre-commit: make fmt
 gitui: pre-commit
     gitui
 
-compile-commands: (make "clean")
-    bear -- just make
+compile-commands-mod: (make-mod "clean")
+    cd user && bear -- just make-mod
     command -v ccache > /dev/null \
-        && sd "$(which ccache)" "$(which gcc)" compile_commands.json \
+        && sd "$(which ccache)" "$(which gcc)" user/compile_commands.json \
         || true
+
+compile-commands-kernel:
+    cd linux && ./scripts/clang-tools/gen_compile_commands.py
+
+join-compile-commands *dirs:
+    #!/usr/bin/env node
+    const fsp = require("fs/promises");
+    const pathLib = require("path");
+
+    function openCompileCommands(dir) {
+        const path = pathLib.join(dir, "compile_commands.json");
+        return {
+            async read() {
+                const json = await fsp.readFile(path, "utf-8");
+                return JSON.parse(json);
+            },
+            async write(compileCommands) {
+                const json = JSON.stringify(compileCommands, null, 4);
+                await fsp.writeFile(path, json);
+            }
+        };
+    }
+
+    async function main() {
+        const dirs = "{{dirs}}".split(" ");
+        const compileCommandArrays = await Promise.all(dirs.map(dir => openCompileCommands(dir).read()));
+        const joinedCompileCommands = compileCommandArrays.flat();
+        await openCompileCommands(".").write(joinedCompileCommands);
+    }
+
+    main().catch(e => {
+        console.error(e);
+        process.exit(1);
+    });
+
+compile-commands: compile-commands-mod compile-commands-kernel (join-compile-commands "user" "linux")
 
 log *args:
     sudo dmesg --kernel --reltime {{args}}
