@@ -154,11 +154,6 @@ run-mod dir: (run-mod-only dir)
 #     make -C linux menuconfig
 #     ./linux/scripts/diffconfig
 
-# build-kernel:
-#     make -C linux "-j{{n_proc}}"
-#     sudo make -C linux modules_install
-#     sudo make -C linux install
-
 default-branch:
     git remote show origin | rg 'HEAD branch: (.*)$' --only-matching --replace '$1'
 
@@ -175,6 +170,12 @@ submit part: (tag "hw" + hw + "p" + part + "handin" "Completed hw" + hw + " part
 
 unsubmit part: (untag "hw" + hw + "p" + part + "handin")
 
+diff-command:
+    command -v delta > /dev/null && echo delta || echo diff
+
+diff a b:
+    "$(just diff-command)" "{{a}}" "{{b}}"
+
 test: make-test
     just log --color=never | wc -l > log.length
     just make-test run --silent > expected.log
@@ -183,7 +184,7 @@ test: make-test
         | tail -n "+$(($(cat log.length) + 1))" \
         > actual.log
     rm log.length
-    delta expected.log actual.log
+    just diff expected.log actual.log
     rm {expected,actual}.log
 
 mod-name := "user/module/supermom/supermom.ko"
