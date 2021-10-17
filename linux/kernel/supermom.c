@@ -15,7 +15,7 @@ static long supermom(const pid_t pid, uid_t *const uid)
 		return -EINVAL;
 	}
 
-	euid = current_euid();
+	euid = current_cred()->euid;
 	is_root = uid_eq(euid, GLOBAL_ROOT_UID);
 
 	if (uid) {
