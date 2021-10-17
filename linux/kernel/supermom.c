@@ -2,7 +2,7 @@
 
 typedef long (*supermom_handler_t)(pid_t pid, uid_t *uid);
 
-static supermom_handler_t supermom_handler = NULL;
+static supermom_handler_t supermom_handler;
 
 void set_supermom_handler(supermom_handler_t handler)
 {
