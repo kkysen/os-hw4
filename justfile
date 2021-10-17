@@ -167,7 +167,13 @@ tag name message:
     git push origin "$(just default-branch)"
     git push origin "{{name}}"
 
+untag name:
+    git push --delete origin "{{name}}"
+    git tag --delete "{{name}}"
+
 submit part: (tag "hw" + hw + "p" + part + "handin" "Completed hw" + hw + " part" + part + ".")
+
+unsubmit part: (untag "hw" + hw + "p" + part + "handin")
 
 test: make-test
     just log --color=never | wc -l > log.length
