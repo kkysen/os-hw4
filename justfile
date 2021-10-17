@@ -5,7 +5,7 @@ hw := "4"
 n_proc := `nproc`
 
 default:
-    just --list
+    just --list --unsorted
 
 install-program-dependencies:
     sudo apt install \
@@ -168,3 +168,14 @@ tag name message:
     git push origin "{{name}}"
 
 submit part: (tag "hw" + hw + "p" + part + "handin" "Completed hw" + hw + " part" + part + ".")
+
+test: make-test
+    just log --color=never | wc -l > log.length
+    just make-test run --silent > expected.log
+    just log --color=never \
+        | rg '^\[[^\]]*\] (.*)$' --replace '$1' \
+        | tail -n "+$(($(cat log.length) + 1))" \
+        > actual.log
+    rm log.length
+    delta expected.log actual.log
+    rm {expected,actual}.log
