@@ -180,6 +180,19 @@ test: make-test
     delta expected.log actual.log
     rm {expected,actual}.log
 
+mod-name := "user/module/supermom/supermom.ko"
+
+test-mod:
+    just test
+    sudo insmod "{{mod-name}}"
+    just test
+    sudo rmmod "{{mod-name}}"
+    just test
+    sudo insmod "{{mod-name}}"
+    just test
+    sudo rmmod "{{mod-name}}"
+    just test
+
 check-patch:
     ./run_checkpatch.sh
 
