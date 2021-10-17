@@ -5,7 +5,7 @@ LDFLAGS = -g -pthread -flto
 #SRCS = $(shell fd --extension c)
 SRCS = $(shell find . -name '*.c')
 OBJS = $(SRCS:.c=.o)
-TARGETS = test_supermom
+TARGETS = supermom.test
 
 all: $(TARGETS) Makefile
 
@@ -28,4 +28,4 @@ clean:
 
 PHONY += run
 run: $(TARGETS)
-	sudo --preserve-env ./test_supermom
+	sudo --preserve-env ./supermom.test
