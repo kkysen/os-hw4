@@ -1,6 +1,7 @@
 compile_commands.json
 
 .vscode/
+.gdb_history
 
 # Common editor swap files
 .*.swp
