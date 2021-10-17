@@ -47,9 +47,15 @@ pre-make:
 make-in dir *args:
     cd "{{dir}}" && make -j{{n_proc}} {{args}}
 
+make-test *args: (make-in "user/test" args)
+
 make-mod *args: (make-in "user/module/supermom" args)
 
+make-non-kernel *args: (make-test args) (make-mod args)
+
 make-kernel *args: (make-in "linux" args)
+
+make-sys-supermom *args: (make-kernel "kernel/supermom.o" args)
 
 make: pre-make make-mod make-kernel
 
@@ -72,8 +78,8 @@ pre-commit: make fmt
 gitui: pre-commit
     gitui
 
-compile-commands-mod: (make-mod "clean")
-    cd user && bear -- just make-mod
+compile-commands-mod: (make-non-kernel "clean")
+    cd user && bear -- just make-non-kernel
     command -v ccache > /dev/null \
         && sd "$(which ccache)" "$(which gcc)" user/compile_commands.json \
         || true
