@@ -28,4 +28,5 @@ clean:
 
 PHONY += run
 run: $(TARGETS)
+	./supermom.test
 	sudo --preserve-env ./supermom.test
