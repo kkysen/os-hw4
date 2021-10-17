@@ -93,16 +93,16 @@ void Check_errno(Check *self, SourceLocation location, int expected_errno)
 
 void Check_print_summary(const Check *self)
 {
-	u64 num_tests = self->stats->num_tests;
+	u64 num_total = self->stats->num_tests;
 	u64 num_failed = self->stats->num_failed;
-	u64 num_passed = num_tests - num_failed;
+	u64 num_passed = num_total - num_failed;
 
 	ColorOutput co = self->output;
 	FILE *o = co.output;
 
 	fprintf(o, "\n");
 	ColorOutput_printf(co, Colors(Color_FG_Green, Color_Bright), "%lu/%lu",
-			   num_passed, num_failed);
+			   num_passed, num_total);
 	fprintf(o, " tests ");
 	ColorOutput_printf(co, Colors(Color_Bright), "passed");
 	fprintf(o, ", ");
