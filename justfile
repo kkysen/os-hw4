@@ -179,3 +179,6 @@ test: make-test
     rm log.length
     delta expected.log actual.log
     rm {expected,actual}.log
+
+check-patch:
+    ./run_checkpatch.sh
