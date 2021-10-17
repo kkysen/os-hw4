@@ -59,7 +59,10 @@ make-sys-supermom *args: (make-kernel "kernel/supermom.o" args)
 
 make: pre-make make-mod make-kernel
 
-install: (make-kernel "modules_install") (make-kernel "install")
+install-only: (make-kernel "modules_install") (make-kernel "install")
+
+install: make-kernel
+    sudo -E env "PATH=${PATH}" just install-only
 
 modified-files:
     git diff --name-only
