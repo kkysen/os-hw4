@@ -9,7 +9,11 @@ Took a long time but I loaded it and it worked.
 Much faster than part1 and it worked.
 
 ### part3
-TODO
+This part is working.
+One thing I added that wasn't explicitly specified was that `-EFAULT` is returned when `copy_to_user` fails,
+which is what the documentation for `copy_to_user` suggests.
+Running `make -C user/test/ run` runs tests for all the possible configurations specified (except the `EFAULT` one),
+and will test as root and as the current user.
 
 ##### Usermode Tests
 I put the usermode test code in `user/test/`.
