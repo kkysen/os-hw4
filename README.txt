@@ -1,10 +1,21 @@
-This file should contain:
+Khyber Sen
+ks3343
+hw4
 
--	Your name & UNI (or those of all group members for group assignments)
--	Homework assignment number
--	Description for each part
+### part1
+Took a long time but I loaded it and it worked.
 
-The description should indicate whether your solution for the part is working
-or not. You may also want to include anything else you would like to
-communicate to the grader, such as extra functionality you implemented or how
-you tried to fix your non-working code.
+### part2
+Much faster than part1 and it worked.
+
+### part3
+TODO
+
+##### Usermode Tests
+I put the usermode test code in `user/test/`.
+Running `make run` there should run the test (requires `sudo`),
+specifically the `test_supermom` executable,
+which will print out which tests failed and how many passed.
+
+### part4
+TODO
