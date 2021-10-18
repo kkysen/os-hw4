@@ -189,15 +189,21 @@ test: make-test
 
 mod-name := "user/module/supermom/supermom.ko"
 
+load-mod mod=mod-name:
+    sudo insmod "{{mod}}"
+
+unload-mod mod=mod-name:
+    sudo rmmod "{{mod}}"
+
 test-mod:
     just test
-    sudo insmod "{{mod-name}}"
+    just load-mod
     just test
-    sudo rmmod "{{mod-name}}"
+    just unload-mod
     just test
-    sudo insmod "{{mod-name}}"
+    just load-mod
     just test
-    sudo rmmod "{{mod-name}}"
+    just unload-mod
     just test
 
 check-patch:
