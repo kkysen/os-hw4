@@ -177,24 +177,33 @@ diff a b:
     "$(just diff-command)" "{{a}}" "{{b}}"
 
 test: make-test
-    just log --color=never | wc -l > log.length
-    -just make-test run --silent > expected.log
+    just log --color=never | wc -l > log.$PPID.length
+    -just make-test run --silent > expected.$PPID.log
     just log --color=never \
         | rg '^\[[^\]]*\] (.*)$' --replace '$1' \
-        | tail -n "+$(($(cat log.length) + 1))" \
-        > actual.log
-    rm log.length
-    -just diff expected.log actual.log
-    rm {expected,actual}.log
+        | tail -n "+$(($(cat log.$PPID.length) + 1))" \
+        > actual.$PPID.log
+    rm log.$PPID.length
+    -just diff {expected,actual}.$PPID.log
+    rm {expected,actual}.$PPID.log
 
-mod-name := "user/module/supermom/supermom.ko"
+supermom-mod-path := "user/module/supermom/supermom.ko"
 
-load-mod mod=mod-name:
-    sudo insmod "{{mod}}"
+is-mod-loaded mod-name=file_stem(supermom-mod-path):
+    rg --quiet '^{{mod-name}} ' /proc/modules
 
-unload-mod mod=mod-name:
-    sudo rmmod "{{mod}}"
+is-mod-loaded-by-path mod-path=supermom-mod-path: (is-mod-loaded file_stem(mod-path))
 
+load-mod mod-path=supermom-mod-path:
+    just unload-mod-by-path "{{mod-path}}"
+    sudo insmod "{{mod-path}}"
+
+unload-mod mod-name=file_stem(supermom-mod-path):
+    just is-mod-loaded "{{mod-name}}" 2> /dev/null && sudo rmmod "{{mod-name}}" || true
+
+unload-mod-by-path mod-path=supermom-mod-path: (unload-mod file_stem(mod-path))
+
+# Warning: run `just log --clear` if setting `$N` high, or else the log buffer will run out of space.
 test-mod:
     just test
     just load-mod
