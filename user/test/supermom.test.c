@@ -104,7 +104,7 @@ static void uid_print(FILE *output, const void *uid_void)
 /// stdout or fd 3 (if open) should be what's printed in the kernel log.
 int main()
 {
-	SupermomCheck checker = SupermomCheck_new(true);
+	SupermomCheck checker = SupermomCheck_new(false);
 
 #define check(pid, uid, error, message)                                        \
 	SupermomCheck_check(&checker, HERE, pid, uid, error, message)
