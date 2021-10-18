@@ -57,7 +57,8 @@ SupermomCheck SupermomCheck_new(bool dynamic_supermom)
 		errno_reset();
 		output = stdout;
 	}
-	bool is_loaded = dynamic_supermom && is_module_loaded("supermom");
+	bool is_loaded =
+		!dynamic_supermom ? true : is_module_loaded("supermom");
 	return (SupermomCheck){
 		.is_loaded = is_loaded,
 		.checker = checker,
