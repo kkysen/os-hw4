@@ -48,7 +48,7 @@ typedef struct {
 	FILE *output;
 } SupermomCheck;
 
-SupermomCheck SupermomCheck_new()
+SupermomCheck SupermomCheck_new(bool dynamic_supermom)
 {
 	setlinebuf(stderr);
 	Check checker = Check_new(ColorOutput_default(stderr));
@@ -57,7 +57,7 @@ SupermomCheck SupermomCheck_new()
 		errno_reset();
 		output = stdout;
 	}
-	bool is_loaded = is_module_loaded("supermom");
+	bool is_loaded = dynamic_supermom && is_module_loaded("supermom");
 	return (SupermomCheck){
 		.is_loaded = is_loaded,
 		.checker = checker,
@@ -103,7 +103,7 @@ static void uid_print(FILE *output, const void *uid_void)
 /// stdout or fd 3 (if open) should be what's printed in the kernel log.
 int main()
 {
-	SupermomCheck checker = SupermomCheck_new();
+	SupermomCheck checker = SupermomCheck_new(true);
 
 #define check(pid, uid, error, message)                                        \
 	SupermomCheck_check(&checker, HERE, pid, uid, error, message)
