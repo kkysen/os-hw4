@@ -178,13 +178,13 @@ diff a b:
 
 test: make-test
     just log --color=never | wc -l > log.length
-    just make-test run --silent > expected.log
+    -just make-test run --silent > expected.log
     just log --color=never \
         | rg '^\[[^\]]*\] (.*)$' --replace '$1' \
         | tail -n "+$(($(cat log.length) + 1))" \
         > actual.log
     rm log.length
-    just diff expected.log actual.log
+    -just diff expected.log actual.log
     rm {expected,actual}.log
 
 mod-name := "user/module/supermom/supermom.ko"
