@@ -38,4 +38,18 @@ So all the tests should pass whether or not the supermom module is loaded.
 `just test-mod` works `just test` between a few repetitions of `insmod` and `rmmod` `supermom.ko`.
 
 ### part5
-TODO
+This part is working.
+I used `debugfs_create_dir("superlog", NULL)`, `debugfs_create_u64("success", 0444)`, and `debugfs_remove_recursive`,
+so it was pretty simple since `debugfs_create_u64` handled all the complex stuff.
+That is, I can just update the `u64` success count and it's automatically reflected in the file.
+
+##### Usermode Tests
+I added code to read the success count (or -1 on error),
+and added a test that checks if the success count is what it expects.
+This also works when the success file isn't there or isn't accessible (non-root),
+but it just checks the behavior is as expected then, not the actual count.
+
+You can also now specify `$N` when running `supermom.test`, like `N=100 supermom.test`,
+which will run all the tests that many times (defaults to 3).
+If `$N` is too high, though, the kernel log buffer may not store everything (or if it was previously very full),
+so the diff against the expected output might not work correctly.
