@@ -54,8 +54,7 @@ int simple_init(void)
 	if (IS_ERR(debug_dir))
 		debug_dir = NULL;
 	else
-		debugfs_create_u64("success", S_IRUGO, debug_dir,
-				   &success_count);
+		debugfs_create_u64("success", 0444, debug_dir, &success_count);
 
 	set_supermom_handler(supermom);
 	return 0;
