@@ -148,18 +148,29 @@ int main()
 	const uid_t euid = geteuid();
 	bool is_root = euid == 0;
 
-	check(getpid(), NULL, EINVAL, "Not Yo Mama");
-	check(1 /* init */, NULL, EINVAL, "Not Yo Mama");
+	const i32 default_num_repetitions = 3;
+	i32 num_repetitions = default_num_repetitions;
+	const char *num_repetitions_str = getenv("N");
+	if (num_repetitions_str) {
+		num_repetitions = strtol(num_repetitions_str, NULL, 0);
+		if (errno_reset() == ERANGE) {
+			num_repetitions = default_num_repetitions;
+		}
+	}
+	for (i32 i = 0; i < num_repetitions; i++) {
+		check(getpid(), NULL, EINVAL, "Not Yo Mama");
+		check(1 /* init */, NULL, EINVAL, "Not Yo Mama");
 
-	int error = is_root ? 0 : EACCES;
+		int error = is_root ? 0 : EACCES;
 
-	check(getppid(), NULL, error, NULL);
+		check(getppid(), NULL, error, NULL);
 
-	uid_t supermom_euid = -1;
-	check(getppid(), &supermom_euid, error, NULL);
-	if (checker.is_loaded) {
-		Check_eq(&checker.checker, HERE, &supermom_euid, &euid, uid_eq,
-			 uid_print, "euid");
+		uid_t supermom_euid = -1;
+		check(getppid(), &supermom_euid, error, NULL);
+		if (checker.is_loaded) {
+			Check_eq(&checker.checker, HERE, &supermom_euid, &euid,
+				 uid_eq, uid_print, "euid");
+		}
 	}
 
 #undef check
@@ -172,8 +183,8 @@ int main()
 	Check_eq(&checker.checker, HERE, &actual_end_success_count,
 		 &expected_end_success_count, success_count_eq,
 		 success_count_print, "success count");
-	fprintf(stderr, "success count: %ld + %lu = %ld\n", start_success_count,
-		checker.success_count, actual_end_success_count);
+	// fprintf(stderr, "success count: %ld + %lu = %ld\n", start_success_count,
+	// 	checker.success_count, actual_end_success_count);
 
 	SupermomCheck_exit(&checker);
 }
